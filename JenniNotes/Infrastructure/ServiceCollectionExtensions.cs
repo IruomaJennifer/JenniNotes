@@ -1,0 +1,35 @@
+﻿using FluentMigrator.Runner;
+using JenniNotes.Infrastructure.Nhibernate;
+using JenniNotes.Infrastructure.Nhibernate.Repositories;
+using nh = NHibernate;
+using System.Runtime.CompilerServices;
+using JenniNotes.Application.CreateNote;
+
+namespace JenniNotes.Infrastructure
+{
+    public static class ServiceCollectionExtensions
+    {
+        public static IServiceCollection AddMigration(this IServiceCollection services, string connectionString)
+        {
+            return services.AddFluentMigratorCore()
+                           .ConfigureRunner(builder => builder.AddSQLite()
+                                    .WithGlobalConnectionString(connectionString)
+                                    .ScanIn(typeof(Repository).Assembly).For.Migrations())
+                           .AddScoped(typeof(nh.ISession), s => new NHibernateService(connectionString).NewSession());
+
+
+        }
+
+        public static IServiceCollection BuildDependencies(this IServiceCollection services)
+        {
+            return services
+                .AddScoped(typeof(DatabaseOperator))
+                .AddScoped(typeof(DatabasePipeline))
+                .AddScoped<INotesRepository, NotesRepository>()
+                .AddScoped<IChoresRepository, ChoresRepository>()
+                .AddScoped<DbContext>()
+                .AddScoped<CreateNoteService>();
+        }
+    }
+}
+
