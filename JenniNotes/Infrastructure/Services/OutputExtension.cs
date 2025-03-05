@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace JenniNotes.Infrastructure
+namespace JenniNotes.Infrastructure.Services
 {
     public static class OutputExtension
     {
         public static IActionResult Response(this Output result)
         {
-            switch(result.StatusCode)
+            switch (result.StatusCode)
             {
                 case StatusCodes.Status200OK:
                     return new OkObjectResult(result);

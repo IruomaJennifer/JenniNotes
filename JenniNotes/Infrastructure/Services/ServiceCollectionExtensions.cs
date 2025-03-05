@@ -1,11 +1,11 @@
 ﻿using FluentMigrator.Runner;
 using JenniNotes.Infrastructure.Nhibernate;
 using JenniNotes.Infrastructure.Nhibernate.Repositories;
-using nh = NHibernate;
+using nH = NHibernate;
 using System.Runtime.CompilerServices;
 using JenniNotes.Application.CreateNote;
 
-namespace JenniNotes.Infrastructure
+namespace JenniNotes.Infrastructure.Services
 {
     public static class ServiceCollectionExtensions
     {
@@ -15,7 +15,7 @@ namespace JenniNotes.Infrastructure
                            .ConfigureRunner(builder => builder.AddSQLite()
                                     .WithGlobalConnectionString(connectionString)
                                     .ScanIn(typeof(Repository).Assembly).For.Migrations())
-                           .AddScoped(typeof(nh.ISession), s => new NHibernateService(connectionString).NewSession());
+                           .AddScoped(typeof(nH.ISession), s => new NHibernateService(connectionString).NewSession());
 
 
         }
