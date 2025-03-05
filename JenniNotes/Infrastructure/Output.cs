@@ -49,4 +49,24 @@
             return new Output<T> { StatusCode = statusCode, IsSuccessful = false };
         }           
     }
+
+    public class PaginatedOutput<T> : Output<T>
+    {
+        public static Output<T> Successful(T data, int current, int totalPages, int currentSize, int totalSize)
+        {
+            return new PaginatedOutput<T>
+            {
+                Data = data,
+                StatusCode = StatusCodes.Status200OK,
+                CurrentPage = current,
+                NumberOfPages = totalPages,
+                CurrentPageSize = currentSize,
+                TotalSize = totalSize
+            };
+        }
+        public int CurrentPage { get; set; }
+        public int NumberOfPages { get; set; }
+        public int CurrentPageSize { get; set; }
+        public int TotalSize { get; set; }
+    }
 }

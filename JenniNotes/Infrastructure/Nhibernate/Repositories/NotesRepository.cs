@@ -30,6 +30,12 @@ namespace JenniNotes.Infrastructure.Nhibernate.Repositories
             await _session.SaveAsync(note);
         }
 
+        public IQueryable<Note> QueryNotes()
+        {
+            return _session.Query<Note>();
+
+        }
+
         public async Task UpdateANote(Note note)
         {
             await _session.UpdateAsync(note);
