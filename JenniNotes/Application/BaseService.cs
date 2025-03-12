@@ -1,9 +1,10 @@
-﻿using JenniNotes.Infrastructure;
+﻿using JenniNotes.Application.FetchNotes;
+using JenniNotes.Infrastructure;
 using JenniNotes.Infrastructure.Nhibernate;
 
 namespace JenniNotes.Application
 {
-    public abstract class BaseService<Request, Response> : BaseService, IBaseService<Request, Response>
+    public abstract class BaseService<Request, Response>(DbContext dbContext, DatabasePipeline pipeline, ILogger<BaseService> logger) : BaseService(dbContext, pipeline, logger), IBaseService<Request, Response>
     {
         public abstract Task<Output<Response>> ExecuteAsync(Request request);
 
@@ -16,8 +17,13 @@ namespace JenniNotes.Application
             return Task.FromResult(Output<Response>.Successful(data));
 
         }
+        public Task<Output<Response>> SuccessfulResult(Response data, int currentPage, int totalPages, int pageSize,int entityCount)
+        {
+            return Task.FromResult(PaginatedOutput<Response>.Successful(data, currentPage,totalPages,pageSize, entityCount));
+
+        }
     }
-    public abstract class BaseService<Request> : BaseService, IBaseService<Request>
+    public abstract class BaseService<Request>(DbContext dbContext, DatabasePipeline pipeline, ILogger<BaseService> logger) : BaseService(dbContext, pipeline, logger), IBaseService<Request>
     {
         public abstract Task<Output> ExecuteAsync(Request request);
 
@@ -31,11 +37,11 @@ namespace JenniNotes.Application
             return Task.FromResult(Output.Successful());
         }
     }
-    public abstract class BaseService
+    public abstract class BaseService(DbContext dbContext, DatabasePipeline pipeline, ILogger<BaseService> logger)
     {
-        protected DatabasePipeline Pipeline { get; set; }
-        protected DbContext DbContext { get; set; }
-        protected ILogger Logger { get; set; }
+        protected DatabasePipeline Pipeline { get; set; } = pipeline;
+        protected DbContext DbContext { get; set; } = dbContext;
+        protected ILogger Logger { get; set; } = logger;
     }
     public interface IBaseService<Request>
     {

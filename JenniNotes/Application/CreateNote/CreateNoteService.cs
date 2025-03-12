@@ -4,15 +4,8 @@ using JenniNotes.Infrastructure.Nhibernate;
 
 namespace JenniNotes.Application.CreateNote
 {
-    public class CreateNoteService : BaseService<CreateNoteDto, string>
+    public class CreateNoteService(DbContext dbContext, DatabasePipeline pipeline, ILogger<BaseService> logger) : BaseService<CreateNoteDto, string>(dbContext, pipeline, logger)
     {
-        public CreateNoteService(DatabasePipeline pipeline, ILogger<CreateNoteService> logger, DbContext dbContext)
-        {
-            Pipeline = pipeline;
-            Logger = logger;
-            DbContext = dbContext;
-        }
-
         public override async Task<Output<string>> ExecuteAsync(CreateNoteDto request)
         {
             var note = new Note(request.Caption, request.Description);

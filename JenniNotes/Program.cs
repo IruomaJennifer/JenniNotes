@@ -1,4 +1,5 @@
 using JenniNotes.Infrastructure;
+using JenniNotes.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration["Jenninotes_ConnectionString"];
