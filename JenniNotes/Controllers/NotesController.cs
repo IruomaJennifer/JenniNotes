@@ -1,5 +1,7 @@
-﻿using JenniNotes.Application.CreateNote;
-using JenniNotes.Infrastructure;
+﻿using JenniNotes.Application;
+using JenniNotes.Application.CreateNote;
+using JenniNotes.Application.FetchNotes;
+using JenniNotes.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,26 +9,22 @@ namespace JenniNotes.Controllers
 {
     [Route("api/notes")]
     [ApiController]
-    public class NotesController : ControllerBase
+    public class NotesController(ServiceContractor serviceContractor) : BaseController(serviceContractor)
     {
-        public NotesController(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-        private readonly IServiceProvider _serviceProvider;
         [HttpGet]
-        public IActionResult FetchAllNotes()
+        public async Task<IActionResult> FetchAllNotes([FromQuery]int currentPage = 1, [FromQuery]int pageSize = 2)
         {
             
-            throw new NotImplementedException();
+            var result = await _serviceContractor.FetchNotes
+                               .ExecuteAsync(new PaginatedRequest { CurrentPage = currentPage, PageSize = pageSize });
+            return result.Response();
         }
 
         [HttpPost]
         public async Task<IActionResult> MakeNote(CreateNoteDto createNoteDto)
         {
-           using var scope =  _serviceProvider.CreateScope();
-            var service = scope.ServiceProvider.GetRequiredService<CreateNoteService>();
-            var result = await service.ExecuteAsync(createNoteDto);
+            var result = await _serviceContractor.CreateNote
+                                .ExecuteAsync(createNoteDto);
             return result.Response();
         }
 

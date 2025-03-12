@@ -4,6 +4,8 @@ using JenniNotes.Infrastructure.Nhibernate.Repositories;
 using nH = NHibernate;
 using System.Runtime.CompilerServices;
 using JenniNotes.Application.CreateNote;
+using JenniNotes.Application.FetchNotes;
+using JenniNotes.Application;
 
 namespace JenniNotes.Infrastructure.Services
 {
@@ -28,7 +30,13 @@ namespace JenniNotes.Infrastructure.Services
                 .AddScoped<INotesRepository, NotesRepository>()
                 .AddScoped<IChoresRepository, ChoresRepository>()
                 .AddScoped<DbContext>()
-                .AddScoped<CreateNoteService>();
+                .AddScoped<CreateNoteService>()
+                .AddScoped(provider =>
+                {
+                    return new FetchNotesService(provider.GetRequiredService<DbContext>(), 
+                                provider.GetRequiredService<ILogger<FetchNotesService>>());
+                })
+                .AddScoped<ServiceContractor>();
         }
     }
 }
